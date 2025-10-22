@@ -28,6 +28,10 @@ A clean, modern, and test-covered console quiz app built with Dart. Questions ar
 
 ---
 
+## UML Diagram
+
+![UML Diagram](UML.png)
+
 ## 🧭 Table of Contents
 
 - Overview
@@ -144,7 +148,6 @@ Notes:
 
 ## 🧠 Architecture
 
-![UML Diagram](UML.png)
 
 - `Question`
   - Fields: `id`, `title`, `choices`, `goodChoice`, `point`
