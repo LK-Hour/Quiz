@@ -1,9 +1,13 @@
 # 🎯 Console Quiz (Dart)
 
+[![Assignment Instructions](https://img.shields.io/badge/📎%20Assignment-Instructions-0ea5e9)](W3%20-%20PRACTICE%20-%20Dart%20Layered%20Architecture.pdf)
+
 A clean, modern, and test-covered console quiz app built with Dart. Questions are loaded from JSON, converted into typed models, and played interactively in your terminal.
 
 > School base-project — created for coursework and learning purposes.  
 > Owner: Loem KimHour
+
+[▶ View Assignment PDF](W3%20-%20PRACTICE%20-%20Dart%20Layered%20Architecture.pdf)
 
 ![Dart](https://img.shields.io/badge/Dart-3%2B-0175C2?logo=dart&logoColor=white)
 ![Type](https://img.shields.io/badge/App-Console-4CAF50)
