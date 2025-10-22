@@ -28,7 +28,7 @@ A clean, modern, and test-covered console quiz app built with Dart. Questions ar
 
 ---
 
-## UML Diagram
+## 💢 UML Diagram
 
 ![UML Diagram](UML.png)
 
