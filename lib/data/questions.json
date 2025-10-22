@@ -11,6 +11,36 @@
       "choices": ["2", "4", "5"],
       "goodChoice": "4",
       "point": 50
+    },
+    {  
+      "title": "Programming language used by Flutter?",
+      "choices": ["Dart", "Kotlin", "Swift"], 
+      "goodChoice": "Dart",
+      "point": 30
+    },
+    {
+      "title": "5 * 3 = ?",
+      "choices": ["8", "15", "10"],
+      "goodChoice": "15",
+      "point": 15
+    },
+    {
+      "title": "Sky color on a clear day?",
+      "choices": ["Blue", "Green", "Red"],
+      "goodChoice": "Blue",
+      "point": 5
+    },
+    {
+      "title": "Binary representation of 5?",
+      "choices": ["101", "110", "111"],
+      "goodChoice": "101",
+      "point": 20
+    },
+    {
+      "title": "HTTP status code for Not Found?",
+      "choices": ["200", "404", "500"],
+      "goodChoice": "404",
+      "point": 20
     }
   ]
 }

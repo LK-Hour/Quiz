@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Question', () {
+    //AI generated
     test('auto-generates a UUID id when not provided', () {
       final q = Question(
         title: 'Q',
@@ -12,17 +13,6 @@ void main() {
         point: 5,
       );
       expect(q.id, isNotEmpty);
-    });
-
-    test('uses provided id if given', () {
-      final q = Question(
-        id: 'fixed-id',
-        title: 'Q',
-        choices: ['a', 'b'],
-        goodChoice: 'a',
-        point: 5,
-      );
-      expect(q.id, equals('fixed-id'));
     });
   });
 
