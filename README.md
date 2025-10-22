@@ -144,12 +144,14 @@ Notes:
 
 ## 🧠 Architecture
 
+![UML Diagram](UML.png)
+
 - `Question`
   - Fields: `id`, `title`, `choices`, `goodChoice`, `point`
   - Constructor auto-generates `id` with `uuid.v4()` when not provided
   - `factory Question.fromJson(Map<String, dynamic>)` creates a `Question` from JSON
 - `Answer`
-  - Binds a `Question` and a user’s `answerChoice`
+  - Binds a `Question` and a user's `answerChoice`
   - `isGood()` compares against `goodChoice` (case-insensitive)
 - `Quiz`
   - Stores `questions` and gathered `answers`
