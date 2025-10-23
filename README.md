@@ -59,11 +59,10 @@ classDiagram
     }
 
     class Player {
-        -String id
         -String name
         -int totalScore
         -List~Answer~ answers
-        +Player(String? id, String name, int totalScore, List~Answer~ answers)
+        +Player(String name, int totalScore, List~Answer~ answers)
         +toString() String
     }
 
