@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "title": "Capital of France?",
+      "choices": ["Paris", "London", "Rome"],
+      "goodChoice": "Paris",
+      "point": 10
+    },
+    {
+      "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "title": "2 + 2 = ?",
+      "choices": ["2", "4", "5"],
+      "goodChoice": "4",
+      "point": 50
+    },
+    {
+      "id": "7ba7b810-9dad-11d1-80b4-00c04fd430c9",
+      "title": "Programming language used by Flutter?",
+      "choices": ["Dart", "Kotlin", "Swift"], 
+      "goodChoice": "Dart",
+      "point": 30
+    },
+    {
+      "id": "8ba7b810-9dad-11d1-80b4-00c04fd430ca",
+      "title": "5 * 3 = ?",
+      "choices": ["8", "15", "10"],
+      "goodChoice": "15",
+      "point": 15
+    },
+    {
+      "id": "9ba7b810-9dad-11d1-80b4-00c04fd430cb",
+      "title": "Sky color on a clear day?",
+      "choices": ["Blue", "Green", "Red"],
+      "goodChoice": "Blue",
+      "point": 5
+    },
+    {
+      "id": "aba7b810-9dad-11d1-80b4-00c04fd430cc",
+      "title": "Binary representation of 5?",
+      "choices": ["101", "110", "111"],
+      "goodChoice": "101",
+      "point": 20
+    },
+    {
+      "id": "bba7b810-9dad-11d1-80b4-00c04fd430cd",
+      "title": "HTTP status code for Not Found?",
+      "choices": ["200", "404", "500"],
+      "goodChoice": "404",
+      "point": 20
+    }
+  ]
+}
