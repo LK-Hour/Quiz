@@ -30,7 +30,62 @@ A clean, modern, and test-covered console quiz app built with Dart. Questions ar
 
 ## 💢 UML Diagram
 
-![UML Diagram](UML.png)
+```mermaid
+classDiagram
+    class Question {
+        -String id
+        -String title
+        -List~String~ choices
+        -String goodChoice
+        -int point
+        +Question(String? id, String title, List~String~ choices, String goodChoice, int point)
+        +fromJson(Map~String, dynamic~ json)$ Question
+    }
+
+    class Answer {
+        -Question question
+        -String answerChoice
+        +Answer(Question question, String answerChoice)
+        +isGood() bool
+    }
+
+    class Quiz {
+        -List~Question~ questions
+        -List~Answer~ answers
+        +Quiz(List~Question~ questions)
+        +addAnswer(Answer answer) void
+        +getScoreInPercentage() int
+        +getTotalPoint() int
+    }
+
+    class Player {
+        -String name
+        -int totalScore
+        +Player(String name, int totalScore)
+        +toString() String
+    }
+
+    class QuizConsole {
+        -Quiz quiz
+        -List~Player~ players
+        -String name
+        +QuizConsole(Quiz quiz)
+        +startQuiz() void
+    }
+
+    class QuizFileProvider {
+        <<utility>>
+        +loadJsonFromFile(String filePath)$ Future~Map~String, dynamic~~
+    }
+
+    Answer --> Question : contains
+    Quiz --> Question : contains many
+    Quiz --> Answer : stores many
+    QuizConsole --> Quiz : uses
+    QuizConsole --> Player : manages many
+    QuizConsole --> Answer : creates
+    Question ..> QuizFileProvider : loaded by
+```
 
 ---
 

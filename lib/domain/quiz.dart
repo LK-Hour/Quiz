@@ -66,3 +66,16 @@ class Quiz {
     return totalPoint;
   }
 }
+
+class Player {
+  final String name;
+  final int totalScore;
+
+  Player({
+    required this.name,
+    required this.totalScore,
+  });
+
+  @override
+  String toString() => 'Player: $name     Score: $totalScore';
+}

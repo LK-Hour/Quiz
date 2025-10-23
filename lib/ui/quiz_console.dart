@@ -4,7 +4,7 @@ import '../domain/quiz.dart';
 
 class QuizConsole {
   Quiz quiz;
-  Map<String, int> player = {};
+  List<Player> players = [];
   String name = 'Start';
 
   QuizConsole({required this.quiz});
@@ -39,11 +39,23 @@ class QuizConsole {
 
       int score = quiz.getScoreInPercentage();
       int point = quiz.getTotalPoint();
-      print('$name, your score: $score % correct');
-      print('$name, your score in points: $point');
+      print('${name.toUpperCase()}, your score: $score % correct');
+      print('${name.toUpperCase()}, your score in points: $point');
       name = name.toUpperCase();
-      player[name] = point;
-      player.forEach((name, score) => print("Player: $name     Score: $score"));
+
+      int playerIndex =
+          players.indexWhere((p) => p.name.toUpperCase() == name.toUpperCase());
+
+      //overrid existing player
+      if (playerIndex != -1) {
+        players[playerIndex] = Player(name: name, totalScore: point);
+      } else {
+        //add new player
+        Player player = Player(name: name, totalScore: point);
+        players.add(player);
+      }
+
+      players.forEach((p) => print(p));
     }
     print('--- Quiz Finished ---');
   }

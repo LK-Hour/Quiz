@@ -126,4 +126,17 @@ void main() {
       expect(first, contains('point'));
     });
   });
+
+  group('Player', () {
+    test('creates player with name and totalScore', () {
+      final player = Player(name: 'ALICE', totalScore: 100);
+      expect(player.name, equals('ALICE'));
+      expect(player.totalScore, equals(100));
+    });
+
+    test('toString returns formatted player info', () {
+      final player = Player(name: 'DAVE', totalScore: 80);
+      expect(player.toString(), equals('Player: DAVE     Score: 80'));
+    });
+  });
 }
