@@ -59,9 +59,11 @@ classDiagram
     }
 
     class Player {
+        -String id
         -String name
         -int totalScore
-        +Player(String name, int totalScore)
+        -List~Answer~ answers
+        +Player(String? id, String name, int totalScore, List~Answer~ answers)
         +toString() String
     }
 
@@ -84,6 +86,7 @@ classDiagram
     QuizConsole --> Quiz : uses
     QuizConsole --> Player : manages many
     QuizConsole --> Answer : creates
+    Player --> Answer : stores many
     Question ..> QuizFileProvider : loaded by
 ```
 
