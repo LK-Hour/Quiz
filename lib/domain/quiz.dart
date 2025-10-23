@@ -70,10 +70,12 @@ class Quiz {
 class Player {
   final String name;
   final int totalScore;
+  final List<Answer> answers;
 
   Player({
     required this.name,
     required this.totalScore,
+    required this.answers,
   });
 
   @override

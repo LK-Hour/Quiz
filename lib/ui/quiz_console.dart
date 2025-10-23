@@ -43,15 +43,26 @@ class QuizConsole {
       print('${name.toUpperCase()}, your score in points: $point');
       name = name.toUpperCase();
 
+      // Copy the answers before clearing for next player
+      List<Answer> playerAnswers = List.from(quiz.answers);
+
       int playerIndex =
           players.indexWhere((p) => p.name.toUpperCase() == name.toUpperCase());
 
       //overrid existing player
       if (playerIndex != -1) {
-        players[playerIndex] = Player(name: name, totalScore: point);
+        players[playerIndex] = Player(
+          name: name,
+          totalScore: point,
+          answers: playerAnswers,
+        );
       } else {
         //add new player
-        Player player = Player(name: name, totalScore: point);
+        Player player = Player(
+          name: name,
+          totalScore: point,
+          answers: playerAnswers,
+        );
         players.add(player);
       }
 

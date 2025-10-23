@@ -128,14 +128,20 @@ void main() {
   });
 
   group('Player', () {
-    test('creates player with name and totalScore', () {
-      final player = Player(name: 'ALICE', totalScore: 100);
+    test('creates player with name, totalScore, and answers', () {
+      final q1 =
+          Question(title: 'Q1', choices: ['a'], goodChoice: 'a', point: 10);
+      final a1 = Answer(question: q1, answerChoice: 'a');
+      final player = Player(name: 'ALICE', totalScore: 10, answers: [a1]);
       expect(player.name, equals('ALICE'));
-      expect(player.totalScore, equals(100));
+      expect(player.totalScore, equals(10));
     });
 
     test('toString returns formatted player info', () {
-      final player = Player(name: 'DAVE', totalScore: 80);
+      final q1 =
+          Question(title: 'Q1', choices: ['a'], goodChoice: 'a', point: 10);
+      final a1 = Answer(question: q1, answerChoice: 'a');
+      final player = Player(name: 'DAVE', totalScore: 80, answers: [a1]);
       expect(player.toString(), equals('Player: DAVE     Score: 80'));
     });
   });
