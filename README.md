@@ -85,6 +85,7 @@ classDiagram
         +loadQuestions()$ Future~List~Question~~
         +loadPlayers()$ Future~List~Player~~
         +savePlayers(List~Player~ players)$ Future~void~
+        +saveQuestions(List~Question~ questions)$ Future~void~
     }
 
     Answer --> Question : references by ID
@@ -253,6 +254,7 @@ This project follows **Clean Architecture** principles with three distinct layer
   - `loadQuestions()`: Reads questions from JSON
   - `loadPlayers()`: Reads player records from JSON
   - `savePlayers()`: Persists player data to JSON
+  - `saveQuestions()`: Saves questions with generated IDs back to JSON (ensures ID persistence)
 - **Benefits**: Main code never touches raw files; easy to swap storage (e.g., to a database)
 
 #### 🧩 Domain Layer (`lib/domain/`)
