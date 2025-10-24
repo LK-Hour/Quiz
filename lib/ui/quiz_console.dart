@@ -1,73 +1,97 @@
 import 'dart:io';
-
 import '../domain/quiz.dart';
+import '../data/quiz_file_provider.dart';
 
+/// UI Layer: Handles console interaction with users
+/// Now properly separates concerns - Quiz provides questions, Player stores answers
 class QuizConsole {
-  Quiz quiz;
+  final Quiz quiz;
   List<Player> players = [];
-  String name = 'Start';
 
-  QuizConsole({required this.quiz});
+  QuizConsole({required this.quiz, List<Player>? existingPlayers}) {
+    players = existingPlayers ?? [];
+  }
 
-  void startQuiz() {
+  Future<void> startQuiz() async {
     print('--- Welcome to the Quiz ---\n');
 
-    while (name != '') {
-      stdout.write('Your name: ');
-      name = stdin.readLineSync() ?? '';
-      if (name == '') {
+    if (players.isNotEmpty) {
+      print('Previous players:');
+      players.forEach((p) => print('  ${p}'));
+      print('');
+    }
+
+    String name = 'Start';
+    while (name.isNotEmpty) {
+      stdout.write('Your name (or press Enter to quit): ');
+      name = stdin.readLineSync()?.trim() ?? '';
+
+      if (name.isEmpty) {
         break;
       }
-      ;
-      quiz.answers.clear();
+
+      // Each player stores their own answers
+      List<Answer> playerAnswers = [];
+
+      // Present each question
       for (var question in quiz.questions) {
-        print('Question: ${question.title} - (${question.point} Points)');
+        print('\nQuestion: ${question.title} - (${question.point} Points)');
         print('Choices: ${question.choices}');
         stdout.write('Your answer: ');
-        String? userInput = stdin.readLineSync();
+        String? userInput = stdin.readLineSync()?.trim();
 
-        // Check for null input
+        // Store answer with question ID (keeps question details private)
         if (userInput != null && userInput.isNotEmpty) {
-          Answer answer = Answer(question: question, answerChoice: userInput);
-          quiz.addAnswer(answer);
+          Answer answer = Answer(
+            questionId: question.id,
+            answerChoice: userInput,
+          );
+          playerAnswers.add(answer);
         } else {
           print('No answer entered. Skipping question.');
         }
-
-        print('');
       }
 
-      int score = quiz.getScoreInPercentage();
-      int point = quiz.getTotalPoint();
-      print('${name.toUpperCase()}, your score: $score % correct');
-      print('${name.toUpperCase()}, your score in points: $point');
+      // Calculate score based on player's answers
+      int score = quiz.getScoreInPercentage(playerAnswers);
+      int points = quiz.getTotalPoints(playerAnswers);
+
+      print('\n${name.toUpperCase()}, your score: $score% correct');
+      print('${name.toUpperCase()}, your total points: $points');
+
       name = name.toUpperCase();
 
-      // Copy the answers before clearing for next player
-      List<Answer> playerAnswers = List.from(quiz.answers);
+      // Check if player already exists (case-insensitive)
+      int playerIndex = players.indexWhere((p) => p.name.toUpperCase() == name);
 
-      int playerIndex =
-          players.indexWhere((p) => p.name.toUpperCase() == name.toUpperCase());
-
-      //overrid existing player
       if (playerIndex != -1) {
+        // Override existing player
         players[playerIndex] = Player(
+          id: players[playerIndex].id, // Keep same ID
           name: name,
-          totalScore: point,
+          totalScore: points,
           answers: playerAnswers,
         );
+        print('(Updated existing player record)');
       } else {
-        //add new player
+        // Add new player
         Player player = Player(
           name: name,
-          totalScore: point,
+          totalScore: points,
           answers: playerAnswers,
         );
         players.add(player);
+        print('(New player record created)');
       }
 
+      // Show all players
+      print('\n--- Leaderboard ---');
       players.forEach((p) => print(p));
+      print('');
     }
-    print('--- Quiz Finished ---');
+
+    // Save all players to JSON file
+    await savePlayers(players);
+    print('\n--- Quiz Finished ---');
   }
 }

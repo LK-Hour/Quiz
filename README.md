@@ -18,13 +18,15 @@ A clean, modern, and test-covered console quiz app built with Dart. Questions ar
 
 ## ⚡️ Highlights
 
-- JSON-driven questions (`lib/data/questions.json`)
-- Strong models: `Question`, `Answer`, `Quiz`
-- Auto-generated UUID for each `Question` (or supply your own `id` in JSON)
-- Case-insensitive answer checking
-- Percentage and total points scoring
-- Multi-player console flow with a simple scoreboard
-- Unit tests that validate the core behavior
+- **Layered Architecture**: Clean separation of data, domain, and UI layers
+- **JSON-driven**: Questions loaded from `lib/data/questions.json`
+- **Player Persistence**: Scores and answers saved to `lib/data/players.json`
+- **Strong models**: `Question`, `Answer`, `Quiz`, `Player`
+- **Auto-generated UUIDs** for Questions and Players
+- **Security-focused**: Answers only store question IDs, not full question details
+- **Case-insensitive** answer checking
+- **Multi-player support** with duplicate name handling
+- **Comprehensive unit tests** covering all features
 
 ---
 
@@ -40,53 +42,58 @@ classDiagram
         -int point
         +Question(String? id, String title, List~String~ choices, String goodChoice, int point)
         +fromJson(Map~String, dynamic~ json)$ Question
+        +toJson() Map~String, dynamic~
     }
 
     class Answer {
-        -Question question
+        -String questionId
         -String answerChoice
-        +Answer(Question question, String answerChoice)
-        +isGood() bool
+        +Answer(String questionId, String answerChoice)
+        +isCorrect(Question question) bool
+        +fromJson(Map~String, dynamic~ json)$ Answer
+        +toJson() Map~String, dynamic~
     }
 
     class Quiz {
         -List~Question~ questions
-        -List~Answer~ answers
         +Quiz(List~Question~ questions)
-        +addAnswer(Answer answer) void
-        +getScoreInPercentage() int
-        +getTotalPoint() int
+        +getScoreInPercentage(List~Answer~ playerAnswers) int
+        +getTotalPoints(List~Answer~ playerAnswers) int
+        +getQuestionById(String id) Question?
     }
 
     class Player {
+        -String id
         -String name
         -int totalScore
         -List~Answer~ answers
-        +Player(String name, int totalScore, List~Answer~ answers)
+        +Player(String? id, String name, int totalScore, List~Answer~ answers)
+        +fromJson(Map~String, dynamic~ json)$ Player
+        +toJson() Map~String, dynamic~
         +toString() String
     }
 
     class QuizConsole {
         -Quiz quiz
         -List~Player~ players
-        -String name
-        +QuizConsole(Quiz quiz)
-        +startQuiz() void
+        +QuizConsole(Quiz quiz, List~Player~? existingPlayers)
+        +startQuiz() Future~void~
     }
 
     class QuizFileProvider {
-        <<utility>>
-        +loadJsonFromFile(String filePath)$ Future~Map~String, dynamic~~
+        <<data layer>>
+        +loadQuestions()$ Future~List~Question~~
+        +loadPlayers()$ Future~List~Player~~
+        +savePlayers(List~Player~ players)$ Future~void~
     }
 
-    Answer --> Question : contains
+    Answer --> Question : references by ID
     Quiz --> Question : contains many
-    Quiz --> Answer : stores many
     QuizConsole --> Quiz : uses
     QuizConsole --> Player : manages many
-    QuizConsole --> Answer : creates
     Player --> Answer : stores many
     Question ..> QuizFileProvider : loaded by
+    Player ..> QuizFileProvider : persisted by
 ```
 
 ---
@@ -118,7 +125,8 @@ This project demonstrates a small but well-structured console application in Dar
 $ dart lib/main.dart
 --- Welcome to the Quiz ---
 
-Your name: Alice
+Your name (or press Enter to quit): Alice
+
 Question: Capital of France? - (10 Points)
 Choices: [Paris, London, Rome]
 Your answer: paris
@@ -127,10 +135,16 @@ Question: 2 + 2 = ? - (50 Points)
 Choices: [2, 4, 5]
 Your answer: 4
 
-Alice, your score: 100 % correct
-Alice, your score in points: 60
-Player: Alice     Score: 60
-Your name:
+ALICE, your score: 100% correct
+ALICE, your total points: 60
+(New player record created)
+
+--- Leaderboard ---
+Player: ALICE     Score: 60
+
+Your name (or press Enter to quit): 
+✓ Players saved successfully
+
 --- Quiz Finished ---
 ```
 
@@ -140,13 +154,14 @@ Your name:
 
 ```
 lib/
-  main.dart                 # Entry: loads JSON, starts console UI
-  data/
-    quiz_file_provider.dart # JSON reading helper
-    questions.json          # Editable quiz data
-  domain/
-    quiz.dart               # Question, Answer, Quiz models & logic
-  ui/
+  main.dart                 # Entry: loads data from provider, starts console UI
+  data/                     # DATA LAYER
+    quiz_file_provider.dart # Handles all file operations (questions & players)
+    questions.json          # Quiz questions (input)
+    players.json            # Player records with scores (auto-generated)
+  domain/                   # DOMAIN LAYER
+    quiz.dart               # Question, Answer, Quiz, Player models & logic
+  ui/                       # UI LAYER
     quiz_console.dart       # Console interaction loop
 
 test/
@@ -183,7 +198,7 @@ dart test
 
 ## 🧾 Data Format (JSON)
 
-`lib/data/questions.json` contains an object with a `questions` array:
+### Questions (`lib/data/questions.json`)
 
 ```json
 {
@@ -199,49 +214,108 @@ dart test
 }
 ```
 
-Notes:
-- `id` is optional. If omitted, a UUID v4 is generated automatically.
+### Players (`lib/data/players.json` - auto-generated)
+
+```json
+{
+  "players": [
+    {
+      "id": "uuid-v4-string",
+      "name": "ALICE",
+      "totalScore": 60,
+      "answers": [
+        {
+          "questionId": "question-uuid",
+          "answerChoice": "Paris"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Notes:**
+- Question `id` is optional. If omitted, a UUID v4 is generated automatically.
 - `goodChoice` is compared case-insensitively during answer checks.
+- Player records are automatically saved after each quiz session.
+- Answers only store question IDs, keeping question details private.
 
 ---
 
 ## 🧠 Architecture
 
+### Layered Design
 
-- `Question`
-  - Fields: `id`, `title`, `choices`, `goodChoice`, `point`
-  - Constructor auto-generates `id` with `uuid.v4()` when not provided
-  - `factory Question.fromJson(Map<String, dynamic>)` creates a `Question` from JSON
-- `Answer`
-  - Binds a `Question` and a user's `answerChoice`
-  - `isGood()` compares against `goodChoice` (case-insensitive)
-- `Quiz`
-  - Stores `questions` and gathered `answers`
-  - `getScoreInPercentage()`: returns truncated integer percentage (e.g., 1/3 → 33)
-  - `getTotalPoint()`: sums points for correct answers by index alignment with `questions`
+This project follows **Clean Architecture** principles with three distinct layers:
 
-Important behavior:
-- The console UI clears previous answers between players so scores are per-player.
-- `getTotalPoint()` assumes answers are entered in the same order as `questions` (enforced by the console UI). If you later accept answers out of order (e.g., by `id`), switch to summing via `Answer.question` instead of relying on index.
+#### 🗄️ Data Layer (`lib/data/`)
+- **`quiz_file_provider.dart`**: Handles all file I/O operations
+  - `loadQuestions()`: Reads questions from JSON
+  - `loadPlayers()`: Reads player records from JSON
+  - `savePlayers()`: Persists player data to JSON
+- **Benefits**: Main code never touches raw files; easy to swap storage (e.g., to a database)
+
+#### 🧩 Domain Layer (`lib/domain/`)
+- **`Question`**: Represents a quiz question
+  - Auto-generates UUID if not provided
+  - `fromJson()` / `toJson()` for serialization
+- **`Answer`**: Stores question ID and answer choice
+  - Only references question by ID (security: keeps question details private)
+  - `isCorrect(Question)`: Case-insensitive validation
+- **`Quiz`**: Manages questions and scoring logic
+  - No longer stores answers (answers belong to players)
+  - `getScoreInPercentage(List<Answer>)`: Calculate percentage score
+  - `getTotalPoints(List<Answer>)`: Calculate point total
+  - `getQuestionById(String)`: Lookup question by ID
+- **`Player`**: Represents a player with their answers
+  - Stores: `id`, `name`, `totalScore`, `answers`
+  - `fromJson()` / `toJson()` for persistence
+  - Auto-generates UUID if not provided
+
+#### 🎨 UI Layer (`lib/ui/`)
+- **`QuizConsole`**: Console interaction loop
+  - Loads existing players from storage
+  - Presents questions one by one
+  - Each player stores their own answers
+  - Handles duplicate names (case-insensitive override)
+  - Auto-saves all players after quiz ends
+
+### Key Design Decisions
+
+1. **Answer stores question ID only**: This keeps the architecture clean and prevents circular dependencies. The Quiz looks up questions by ID when validating answers.
+
+2. **Players own their answers**: The Quiz class no longer has an `answers` list. Each Player stores their own answers, making the design more intuitive.
+
+3. **Data layer abstraction**: `main.dart` never touches file operations. All I/O is handled by `quiz_file_provider.dart`.
+
+4. **Persistence**: Player records (including all their answers) are automatically saved to `players.json` after each session.
 
 ---
 
 ## 🛠️ Customize
 
-- Edit or add questions in `lib/data/questions.json`
-- To show the question ID in the console, log `question.id` in `quiz_console.dart`
-- Change the JSON path in `lib/main.dart` if you move the data file:
+- **Add/Edit questions**: Modify `lib/data/questions.json`
+- **Change file paths**: Update constants in `quiz_file_provider.dart`:
   ```dart
-  final data = await loadJsonFromFile('lib/data/questions.json');
+  const String questionsFilePath = 'lib/data/questions.json';
+  const String playersFilePath = 'lib/data/players.json';
   ```
+- **View question IDs**: Log `question.id` in `quiz_console.dart`
+- **Clear player history**: Delete `lib/data/players.json` (will be recreated on next run)
+- **Custom scoring**: Modify `Quiz.getTotalPoints()` logic in `domain/quiz.dart`
 
 ---
 
 ## 🧯 Troubleshooting
 
-- Path errors: run from the project root and ensure `lib/data/questions.json` exists.
-- Type errors: ensure `point` is a number and `choices` is an array of strings.
-- “Hangs”: the app waits for your input in the terminal; type and press Enter.
+| Issue | Solution |
+|-------|----------|
+| **Path errors** | Run from project root; ensure `lib/data/questions.json` exists |
+| **Type errors** | Verify `point` is a number, `choices` is string array in JSON |
+| **App hangs** | It's waiting for input; type and press Enter |
+| **Players not saving** | Check write permissions in `lib/data/` directory |
+| **Old player data** | Delete `lib/data/players.json` to reset |
+| **Tests failing** | Run `dart pub get` to ensure dependencies are installed |
 
 ---
 

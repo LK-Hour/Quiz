@@ -1,0 +1,42 @@
+{
+  "players": [
+    {
+      "id": "4e06a091-5c0d-48e0-9a39-cba022949bdb",
+      "name": "HOUR",
+      "totalScore": 60,
+      "answers": [
+        {
+          "questionId": "f52ad458-60fd-46e9-b892-77481263d2d6",
+          "answerChoice": "15"
+        },
+        {
+          "questionId": "a3b29c53-da9a-4914-88ed-a61f50dbdae4",
+          "answerChoice": "blue"
+        },
+        {
+          "questionId": "1f8ad556-253e-44b9-8f0c-3de0f2dde220",
+          "answerChoice": "101"
+        },
+        {
+          "questionId": "1a37c555-1d4f-4e20-8406-41550f808054",
+          "answerChoice": "404"
+        }
+      ]
+    },
+    {
+      "id": "6e55078c-ec08-466d-9638-71c117e9e820",
+      "name": "NHA",
+      "totalScore": 20,
+      "answers": [
+        {
+          "questionId": "f52ad458-60fd-46e9-b892-77481263d2d6",
+          "answerChoice": "15"
+        },
+        {
+          "questionId": "a3b29c53-da9a-4914-88ed-a61f50dbdae4",
+          "answerChoice": "blue"
+        }
+      ]
+    }
+  ]
+}
